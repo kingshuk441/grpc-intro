@@ -1,0 +1,20 @@
+syntax = "proto3";
+
+package sec06;
+
+
+option java_multiple_files = true;
+option java_package = "com.example.models.sec06";
+
+message BalanceCheckRequest{
+  int32 account_number = 1;
+}
+message AccountBalance{
+  int32 account_number = 1;
+  int32 balance = 2;
+}
+service BankService{
+  //unary
+  rpc getAccountBalance(BalanceCheckRequest) returns (AccountBalance);
+}
+

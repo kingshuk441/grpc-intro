@@ -1,5 +1,6 @@
 package org.example.sec06.repository;
 
+import java.util.Collections;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -15,5 +16,9 @@ public class AccountRepository {
 
     public static Integer getBalance(int accountNumber) {
         return db.get(accountNumber);
+    }
+
+    public static Map<Integer, Integer> getAllAccountBalance() {
+        return Collections.unmodifiableMap(db);
     }
 }

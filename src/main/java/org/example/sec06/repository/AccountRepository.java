@@ -7,7 +7,7 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 public class AccountRepository {
-    public static final Map<Integer, Integer> db = IntStream.rangeClosed(1, 10)
+    public static Map<Integer, Integer> db = IntStream.rangeClosed(1, 10)
             .boxed()
             .collect(Collectors.toConcurrentMap(
                     Function.identity(),
@@ -24,6 +24,19 @@ public class AccountRepository {
 
     public static void deductAmount(int accountNumber, int amount) {
         db.computeIfPresent(accountNumber, (k, v) -> v - amount);
+    }
+
+    public static void addAmount(int accountNumber, int amount) {
+        db.computeIfPresent(accountNumber, (k, v) -> v + amount);
+    }
+
+    public static void restoreDb() {
+        db = IntStream.rangeClosed(1, 10)
+                .boxed()
+                .collect(Collectors.toConcurrentMap(
+                        Function.identity(),
+                        v -> 100
+                ));
     }
 
 }

@@ -3,6 +3,7 @@ package com.example.test.sec06;
 import com.example.models.sec06.*;
 import com.example.test.common.ResponseObserver;
 import com.google.protobuf.Empty;
+import org.example.sec06.repository.AccountRepository;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
@@ -32,7 +33,6 @@ public class L04ServerStreamingClientTest extends AbstractTest {
         Assertions.assertEquals(2, observer.getItems().size());
         Assertions.assertEquals(10, observer.getItems().getFirst().getAmount());
         Assertions.assertNull(observer.getThrowable());
-
     }
 
 }

@@ -1,12 +1,8 @@
 package com.example.test.sec07;
 
-import com.example.models.sec06.BankServiceGrpc;
-import com.example.models.sec06.TransferServiceGrpc;
 import com.example.models.sec07.FlowControlServiceGrpc;
 import com.example.test.common.AbstractChannelTest;
 import org.example.common.GrpcServer;
-import org.example.sec06.BankService;
-import org.example.sec06.TransferService;
 import org.example.sec06.repository.AccountRepository;
 import org.example.sec07.FlowControlService;
 import org.junit.jupiter.api.AfterAll;

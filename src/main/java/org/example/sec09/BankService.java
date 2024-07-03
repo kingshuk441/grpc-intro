@@ -1,35 +1,32 @@
-package org.example.sec06;
+package org.example.sec09;
 
-import com.example.models.sec06.*;
+import com.example.models.sec09.*;
 import com.google.common.util.concurrent.Uninterruptibles;
-import com.google.protobuf.Empty;
+import io.grpc.Status;
 import io.grpc.stub.StreamObserver;
-import org.example.sec06.repository.AccountRepository;
-import org.example.sec06.requestHandlers.DepositRequestHandler;
+import org.example.sec09.repository.AccountRepository;
+
+import org.example.sec09.validator.RequestValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 
 import java.util.concurrent.TimeUnit;
 
 public class BankService extends BankServiceGrpc.BankServiceImplBase {
-    private static final Logger log = LoggerFactory.getLogger(org.example.sec09.BankService.class);
+    private static final Logger log = LoggerFactory.getLogger(BankService.class);
 
-    @Override
-    public void getAllAccounts(Empty request, StreamObserver<AllAccountResponse> responseObserver) {
-        var allAccounts = AccountRepository.getAllAccountBalance()
-                .entrySet()
-                .stream()
-                .map(e -> AccountBalance.newBuilder()
-                        .setAccountNumber(e.getKey())
-                        .setBalance(e.getValue())
-                        .build()).toList();
-        var allAccountBalanceResponse = AllAccountResponse.newBuilder().addAllAccounts(allAccounts).build();
-        responseObserver.onNext(allAccountBalanceResponse);
-        responseObserver.onCompleted();
-    }
 
     @Override
     public void getAccountBalance(BalanceCheckRequest request, StreamObserver<AccountBalance> responseObserver) {
+        RequestValidator.validateAccount(request.getAccountNumber())
+                .map(Status::asException)//casting in runtimeException.
+                .ifPresentOrElse(responseObserver::onError,
+                        () -> sendAccountBalance(request, responseObserver));
+
+    }
+
+    private void sendAccountBalance(BalanceCheckRequest request, StreamObserver<AccountBalance> responseObserver) {
         var accountNo = request.getAccountNumber();
         var balance = AccountRepository.getBalance(accountNo);
         var accountBalance = AccountBalance.newBuilder().setBalance(balance).setAccountNumber(accountNo).build();
@@ -39,6 +36,16 @@ public class BankService extends BankServiceGrpc.BankServiceImplBase {
 
     @Override
     public void withdraw(WithdrawRequest request, StreamObserver<Money> responseObserver) {
+        RequestValidator.validateAccount(request.getAccountNumber())
+                .or(() -> RequestValidator.isAmountDivisibleBy10(request.getAmount()))
+                .or(() -> RequestValidator.hasSufficientBalance(request.getAmount(), AccountRepository.getBalance(request.getAccountNumber())))
+                .map(Status::asRuntimeException)
+                .ifPresentOrElse(responseObserver::onError,
+                        () -> sendMoney(request, responseObserver));
+        ;
+    }
+
+    private void sendMoney(WithdrawRequest request, StreamObserver<Money> responseObserver) {
         var accountNumber = request.getAccountNumber();
         var requiredAmount = request.getAmount();
         var balance = AccountRepository.getBalance(accountNumber);
@@ -59,8 +66,5 @@ public class BankService extends BankServiceGrpc.BankServiceImplBase {
         responseObserver.onCompleted();
     }
 
-    @Override
-    public StreamObserver<DepositRequest> deposit(StreamObserver<AccountBalance> responseObserver) {
-        return new DepositRequestHandler(responseObserver);
-    }
+
 }

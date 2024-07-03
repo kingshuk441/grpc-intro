@@ -1,10 +1,7 @@
 package org.example.common;
 
-import io.grpc.ServerBuilder;
 import org.example.asign01.GameService;
-import org.example.sec06.BankService;
-import org.example.sec06.TransferService;
-import org.example.sec07.FlowControlService;
+import org.example.sec09.BankService;
 
 import java.io.IOException;
 
@@ -23,7 +20,11 @@ public class Demo {
 //                .start()
 //                .await();
 
-        GrpcServer.create(6565, new GameService())
+//        GrpcServer.create(6565, new GameService())
+//                .start()
+//                .await();
+
+        GrpcServer.create(6565, new BankService())
                 .start()
                 .await();
     }

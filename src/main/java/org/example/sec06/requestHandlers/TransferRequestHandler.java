@@ -5,7 +5,6 @@ import com.example.models.sec06.TransferRequest;
 import com.example.models.sec06.TransferResponse;
 import com.example.models.sec06.TransferStatus;
 import io.grpc.stub.StreamObserver;
-import org.example.sec06.TransferService;
 import org.example.sec06.repository.AccountRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,12 +20,14 @@ public class TransferRequestHandler implements StreamObserver<TransferRequest> {
     @Override
     public void onNext(TransferRequest transferRequest) {
         var status = this.transfer(transferRequest);
+//        if (status == TransferStatus.COMPLETED) { // 1 request does not require 1 response every time
         var response = TransferResponse.newBuilder()
                 .setStatus(status)
                 .setFromAccount(this.updatedAccountBalance(transferRequest.getFromAccount()))
                 .setToAccount(this.updatedAccountBalance(transferRequest.getToAccount()))
                 .build();
         responseObserver.onNext(response);
+//        }
     }
 
     @Override

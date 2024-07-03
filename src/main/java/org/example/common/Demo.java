@@ -1,6 +1,7 @@
 package org.example.common;
 
 import io.grpc.ServerBuilder;
+import org.example.asign01.GameService;
 import org.example.sec06.BankService;
 import org.example.sec06.TransferService;
 import org.example.sec07.FlowControlService;
@@ -18,7 +19,11 @@ public class Demo {
 //                .start()
 //                .await();
 
-        GrpcServer.create(6565, new FlowControlService())
+//        GrpcServer.create(6565, new FlowControlService())
+//                .start()
+//                .await();
+
+        GrpcServer.create(6565, new GameService())
                 .start()
                 .await();
     }

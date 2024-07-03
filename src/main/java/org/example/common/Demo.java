@@ -1,7 +1,7 @@
 package org.example.common;
 
 import org.example.asign01.GameService;
-import org.example.sec09.BankService;
+import org.example.sec10.BankService;
 
 import java.io.IOException;
 

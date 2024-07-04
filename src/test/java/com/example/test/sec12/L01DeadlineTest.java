@@ -7,16 +7,14 @@ import com.example.models.sec12.WithdrawRequest;
 import com.example.test.common.ResponseObserver;
 import com.example.test.sec12.interceptors.DeadlineInterceptor;
 import io.grpc.ClientInterceptor;
-import io.grpc.Deadline;
 import io.grpc.Status;
 import io.grpc.StatusRuntimeException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.time.Duration;
-import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
+
 
 public class L01DeadlineTest extends AbstractInterceptorTest {
     @Override

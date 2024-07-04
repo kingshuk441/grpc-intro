@@ -2,6 +2,7 @@ package org.example.sec11.repository;
 
 import com.example.models.sec11.*;
 import com.google.common.util.concurrent.Uninterruptibles;
+import io.grpc.Context;
 import io.grpc.Status;
 import io.grpc.stub.StreamObserver;
 
@@ -36,14 +37,14 @@ public class DeadlineBankService extends BankServiceGrpc.BankServiceImplBase {
             return;
         }
 
-        for (int i = 1; i <= requiredAmount / 10; i++) {
+        for (int i = 1; i <= requiredAmount / 10 && !Context.current().isCancelled(); i++) {
             var money = Money.newBuilder().setAmount(10).build();
             responseObserver.onNext(money);
             log.info("money sent by service: {}", money);
             AccountRepository.deductAmount(accountNumber, 10);
             Uninterruptibles.sleepUninterruptibly(1, TimeUnit.SECONDS);
         }
-
+        log.info("streaming completed");
         responseObserver.onCompleted();
     }
 }

@@ -2,6 +2,8 @@ package com.example.test.sec12;
 
 import com.example.models.sec12.AccountBalance;
 import com.example.models.sec12.BalanceCheckRequest;
+import com.example.models.sec12.Money;
+import com.example.models.sec12.WithdrawRequest;
 import com.example.test.common.ResponseObserver;
 import com.example.test.sec12.interceptors.DeadlineInterceptor;
 import io.grpc.ClientInterceptor;
@@ -31,7 +33,7 @@ public class L01DeadlineTest extends AbstractInterceptorTest {
             var response = this.bankBlockingStub.getAccountBalance(request);
         });
 
-        Assertions.assertEquals(Status.Code.DEADLINE_EXCEEDED,ex.getStatus().getCode());
+        Assertions.assertEquals(Status.Code.DEADLINE_EXCEEDED, ex.getStatus().getCode());
 
 
     }
@@ -50,4 +52,22 @@ public class L01DeadlineTest extends AbstractInterceptorTest {
         Assertions.assertEquals(Status.Code.DEADLINE_EXCEEDED, Status.fromThrowable(response.getThrowable()).getCode());
 
     }
+
+    @Test
+    public void overrideInterceptorTest() {
+
+        var request = WithdrawRequest.newBuilder()
+                .setAccountNumber(1)
+                .setAmount(50)
+                .build();
+        var response = ResponseObserver.<Money>create();
+        this.bankStub
+                .withdraw(request, response);
+        response.await();
+        Assertions.assertEquals(2, response.getItems().size());
+        Assertions.assertEquals(Status.Code.DEADLINE_EXCEEDED, Status.fromThrowable(response.getThrowable()).getCode());
+
+
+    }
+
 }

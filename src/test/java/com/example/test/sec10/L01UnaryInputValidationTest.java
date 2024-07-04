@@ -21,7 +21,7 @@ public class L01UnaryInputValidationTest extends AbstractTest {
 
         var ex = Assertions.assertThrows(StatusRuntimeException.class, () -> {
             var request = BalanceCheckRequest.newBuilder()
-                    .setAccountNumber(10)
+                    .setAccountNumber(11)
                     .build();
             var response = this.bankBlockingStub.getAccountBalance(request);
         });

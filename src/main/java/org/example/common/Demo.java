@@ -1,6 +1,7 @@
 package org.example.common;
 
 import org.example.asign01.GameService;
+import org.example.asign02.CalculationService;
 import org.example.sec10.BankService;
 
 import java.io.IOException;
@@ -24,7 +25,11 @@ public class Demo {
 //                .start()
 //                .await();
 
-        GrpcServer.create(6565, new BankService())
+//        GrpcServer.create(6565, new BankService())
+//                .start()
+//                .await();
+
+        GrpcServer.create(6565, new CalculationService())
                 .start()
                 .await();
     }

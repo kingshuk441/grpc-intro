@@ -9,7 +9,7 @@ public class GzipRequestInterceptor implements ClientInterceptor {
 
     @Override
     public <ReqT, RespT> ClientCall<ReqT, RespT> interceptCall(MethodDescriptor<ReqT, RespT> methodDescriptor, CallOptions callOptions, Channel channel) {
-        log.info("gzip compression added");
+        log.info("gzip compression added on client");
         return channel.newCall(methodDescriptor,callOptions.withCompression("gzip"));
     }
 }

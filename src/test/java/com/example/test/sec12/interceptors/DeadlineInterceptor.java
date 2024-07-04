@@ -13,7 +13,7 @@ public class DeadlineInterceptor implements ClientInterceptor {
     private final Duration duration;
 
     public DeadlineInterceptor(Duration duration) {
-        log.info("deadline interceptor added");
+        log.info("deadline interceptor added on client");
         this.duration = duration;
     }
 

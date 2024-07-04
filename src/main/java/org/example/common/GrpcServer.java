@@ -1,6 +1,7 @@
 package org.example.common;
 
 import io.grpc.*;
+import org.example.sec12.interceptors.GzipResponseInterceptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -20,7 +21,8 @@ public class GrpcServer {
     }
 
     public static GrpcServer create(int port, BindableService... services) {
-        var builder = ServerBuilder.forPort(port);
+        var builder = ServerBuilder.forPort(port)
+                .intercept(new GzipResponseInterceptor());
         Arrays.asList(services).forEach(builder::addService);
         return new GrpcServer(builder.build());
     }

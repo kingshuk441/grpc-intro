@@ -3,6 +3,7 @@ package com.example.test.sec11;
 
 import com.example.models.sec11.AccountBalance;
 import com.example.models.sec11.BalanceCheckRequest;
+import com.example.models.sec11.Money;
 import com.example.models.sec11.WithdrawRequest;
 import com.example.test.common.ResponseObserver;
 import com.google.common.util.concurrent.Uninterruptibles;
@@ -23,7 +24,7 @@ public class L02ServerStreamingDeadlineTest extends AbstractTest {
     @Test
     public void blockingServerStreamingDeadlineTest() {
 
-        try {
+        var ex = Assertions.assertThrows(StatusRuntimeException.class, () -> {
             var request = WithdrawRequest.newBuilder()
                     .setAccountNumber(1)
                     .setAmount(50)
@@ -34,25 +35,24 @@ public class L02ServerStreamingDeadlineTest extends AbstractTest {
             while (iterator.hasNext()) {
                 log.info("{}", iterator.next());
             }
-        } catch (Exception e) {
-            log.info("error");
-        }
-        Uninterruptibles.sleepUninterruptibly(10, TimeUnit.SECONDS);
+        });
 
+        Assertions.assertEquals(Status.Code.DEADLINE_EXCEEDED, ex.getStatus().getCode());
     }
 
     @Test
     public void asyncDeadlineTest() {
 
-        var request = BalanceCheckRequest.newBuilder()
+        var request = WithdrawRequest.newBuilder()
                 .setAccountNumber(1)
+                .setAmount(50)
                 .build();
-        var response = ResponseObserver.<AccountBalance>create();
+        var response = ResponseObserver.<Money>create();
         this.bankStub
                 .withDeadline(Deadline.after(2, TimeUnit.SECONDS))
-                .getAccountBalance(request, response);
+                .withdraw(request, response);
         response.await();
-        Assertions.assertTrue(response.getItems().isEmpty());
+        Assertions.assertEquals(2,response.getItems().size());
         Assertions.assertEquals(Status.Code.DEADLINE_EXCEEDED, Status.fromThrowable(response.getThrowable()).getCode());
 
     }

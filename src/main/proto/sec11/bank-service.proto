@@ -1,0 +1,32 @@
+syntax = "proto3";
+
+package sec11;
+
+
+option java_multiple_files = true;
+option java_package = "com.example.models.sec11";
+
+message BalanceCheckRequest{
+  int32 account_number = 1;
+}
+message AccountBalance{
+  int32 account_number = 1;
+  int32 balance = 2;
+}
+
+
+message  WithdrawRequest{
+  int32 account_number = 1;
+  int32  amount = 2;
+}
+message Money{
+  int32 amount = 1;
+}
+
+service BankService{
+  //unary
+  rpc getAccountBalance(BalanceCheckRequest) returns (AccountBalance);
+
+  //server streaming
+  rpc Withdraw(WithdrawRequest) returns (stream Money);
+}

@@ -6,6 +6,7 @@ import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
 import org.example.common.GrpcServer;
 import org.example.sec12.BankService;
+import org.example.sec12.interceptors.GzipResponseInterceptor;
 import org.example.sec12.repository.AccountRepository;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -19,7 +20,15 @@ import java.util.List;
 public abstract class AbstractInterceptorTest {
     private static final Logger log = LoggerFactory.getLogger(AbstractTest.class);
     protected ManagedChannel channel;
-    private final GrpcServer grpcServer = GrpcServer.create(new BankService());
+    private GrpcServer grpcServer;
+
+    protected GrpcServer createServer() {
+        return GrpcServer.create(6565, builder -> {
+            builder.addService(new BankService())
+                    .intercept(new GzipResponseInterceptor());
+        });
+    }
+
     protected BankServiceGrpc.BankServiceBlockingStub bankBlockingStub;
     protected BankServiceGrpc.BankServiceStub bankStub;
 
@@ -27,6 +36,7 @@ public abstract class AbstractInterceptorTest {
 
     @BeforeAll
     public void setup() {
+        this.grpcServer = this.createServer();
         this.grpcServer.start();
         this.channel = ManagedChannelBuilder.forAddress("localhost", 6565)
                 .usePlaintext()

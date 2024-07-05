@@ -2,7 +2,8 @@ package org.example.common;
 
 import org.example.asign01.GameService;
 import org.example.asign02.CalculationService;
-import org.example.sec10.BankService;
+import org.example.sec12.BankService;
+import org.example.sec12.interceptors.ApiKeyValidationInterceptor;
 
 import java.io.IOException;
 
@@ -28,9 +29,14 @@ public class Demo {
 //        GrpcServer.create(6565, new BankService())
 //                .start()
 //                .await();
+//
+//        GrpcServer.create(6565, new CalculationService())
+//                .start()
+//                .await();
 
-        GrpcServer.create(6565, new CalculationService())
-                .start()
-                .await();
+        GrpcServer.create(6565, builder -> {
+            builder.addService(new BankService())
+                    .intercept(new ApiKeyValidationInterceptor());
+        }).start().await();
     }
 }

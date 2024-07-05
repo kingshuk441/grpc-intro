@@ -4,6 +4,7 @@ import org.example.asign01.GameService;
 import org.example.asign02.CalculationService;
 import org.example.sec12.BankService;
 import org.example.sec12.interceptors.ApiKeyValidationInterceptor;
+import org.example.sec12.interceptors.UserTokenInterceptor;
 
 import java.io.IOException;
 
@@ -36,7 +37,8 @@ public class Demo {
 
         GrpcServer.create(6565, builder -> {
             builder.addService(new BankService())
-                    .intercept(new ApiKeyValidationInterceptor());
+                    .intercept(new UserTokenInterceptor());
+//                    .intercept(new ApiKeyValidationInterceptor());
         }).start().await();
     }
 }
